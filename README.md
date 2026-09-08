@@ -49,13 +49,91 @@
 
 ## 第一次使用
 
-1. 用 Obsidian 打开整个 `research_wiki/` 文件夹。
-2. 把论文放进 `raw/papers/`；文件名推荐使用 `firstauthor-year-short-title.pdf`。
-3. 对 Agent 说：`深度 ingest raw/papers/xxx.pdf`。
-4. Agent 会先查重、读取论文并与你确认关键结论，再建立论文卡片和知识关联。
-5. 从 `dashboard.md` 或 `index.md` 浏览结果。
+### 先认识 Obsidian 和 Agent
 
-如果只想先筛选文献，可以说：`快速 ingest raw/papers/xxx.pdf`。快速模式只建基础论文卡片，不创建主张页，不把粗读结果伪装成深度理解。
+这个项目需要两个角色共同工作：
+
+- **Obsidian 是阅读和浏览工具**：用来打开 Markdown 文件、点击双链、查看论文卡片和知识网络。
+- **Agent 是实际维护 Wiki 的 AI 助手**：它会读取论文和项目规则，查重、提取证据、创建或更新 Markdown 页面，并维护双链、`index.md` 和 `log.md`。
+
+这里的 **Agent** 不是某一个特定产品。它可以是 Claude Code、OpenAI Codex、WorkBuddy，或者其他能够直接读取和修改本地工作目录的 AI 工作助手。无论使用哪一种，关键是让它获得整个 `research_wiki/` 文件夹的读写权限，而不只是把一篇 PDF 单独上传到普通聊天窗口。
+
+如果一个 AI 工具只能阅读聊天附件、不能打开本地文件夹，它可以帮你总结论文，但无法可靠地维护这个 Wiki 的目录、双链、索引和日志。
+
+### 第 1 步：下载并用 Obsidian 打开
+
+不熟悉 Git 也没有关系：可以在 GitHub 页面点击 **Code → Download ZIP**。解压后的文件夹通常名为 `research-wiki-main/`，也可以把它重命名为 `research_wiki/`。
+
+打开 Obsidian，选择“打开本地仓库”或“将文件夹作为仓库打开”，然后选择整个 `research_wiki/`。不要只打开其中的 `wiki/` 或 `raw/` 子目录。
+
+仓库中已经带有一篇 SAM 3D 论文的完整示例，可以先从 `dashboard.md` 或 `index.md` 点击浏览，理解论文卡片、主张、方法和数据集是怎样连接起来的。
+
+### 第 2 步：让 Agent 打开同一个目录
+
+再用你的 Agent 打开同一个 `research_wiki/` 文件夹，并把它设为当前工作目录、项目目录或 workspace。不同工具的叫法可能不同：
+
+- **Claude Code**：在 Claude Code 中进入或选择这个文件夹，再开始对话。
+- **OpenAI Codex**：新建任务时选择这个文件夹作为项目或工作目录。
+- **WorkBuddy**：把这个文件夹作为本地项目或 workspace 打开。
+- **其他 Agent**：确认它能看到 `AGENTS.md`、`CLAUDE.md`、`raw/`、`wiki/` 和 `templates/`，并拥有修改 Markdown 文件的权限。
+
+如果 Agent 弹出文件访问授权，只需要授权当前 `research_wiki/` 文件夹，不必授予整个磁盘的权限。
+
+第一次连接时，可以先发送下面这段话，让 Agent 熟悉项目而不立即改文件：
+
+```text
+请先完整阅读当前目录中的 AGENTS.md、CLAUDE.md 和 index.md，
+带我熟悉这个 Research Wiki 的目录、证据规则和工作流程。
+暂时不要修改任何文件。
+```
+
+### 第 3 步：放入第一篇论文
+
+把准备处理的 PDF 放进 `raw/papers/`。推荐使用稳定、容易识别的文件名，例如：
+
+```text
+firstauthor-year-short-title.pdf
+```
+
+`raw/` 是原始来源层。Agent 可以读取和引用其中的资料，但默认不会修改、覆盖、移动或删除原始论文。
+
+### 第 4 步：选择快速或深度 Ingest
+
+如果只是想先判断论文值不值得读，对 Agent 说：
+
+```text
+快速 ingest raw/papers/firstauthor-year-short-title.pdf
+```
+
+快速模式只读取元数据和摘要级信息，建立基础论文卡片，不创建主张页，也不会把粗读结果伪装成全文结论。
+
+如果希望完整阅读并接入知识网络，对 Agent 说：
+
+```text
+深度 ingest raw/papers/firstauthor-year-short-title.pdf
+```
+
+深度模式会阅读全文，定位关键结论所在的页码、章节、图或表，并判断论文是在支持、反驳还是限定已有主张。
+
+### 第 5 步：确认关键理解
+
+深度 Ingest 不会立刻写入大量页面。Agent 应当先向你展示：
+
+- 它对论文研究问题、方法、主要结果和局限的理解；
+- 准备建立或更新的关键主张；
+- 每条主张的证据位置和适用边界；
+- 与现有 Wiki 页面可能发生的支持、反驳或限定关系。
+
+确认这些内容没有明显误读后，回复“确认写入”。Agent 才会正式建立论文卡片、主张和必要的概念、方法或数据集页面，并同步维护反向链接、`index.md` 和 `log.md`。
+
+### 第 6 步：查看和继续使用
+
+写入完成后，可以从以下两个入口查看结果：
+
+- `dashboard.md`：日常入口；安装 Dataview 后可以显示自动看板，不安装也不影响基本使用。
+- `index.md`：完整内容目录，适合按论文、主张、概念、方法或研究问题浏览。
+
+之后可以继续把论文放进 `raw/papers/`，让 Agent 逐篇 Ingest。随着来源增加，同一个 `claim` 页面会逐步汇集支持、反驳和限定证据，而不是为每篇论文重复创建近义结论。
 
 ## 常用指令
 
