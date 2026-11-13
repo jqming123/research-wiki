@@ -2,3 +2,6 @@
 .obsidian/workspace.json
 .obsidian/workspace-mobile.json
 .trash/
+
+# 原始 PDF 不进 git：单篇动辄数十 MB，历史不可回收
+raw/**/*.[pP][dD][fF]
