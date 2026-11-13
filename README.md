@@ -2,6 +2,8 @@
 
 一个面向专业科研工作的 LLM Wiki 初版。它不只是保存 PDF 和论文摘要，而是把文献逐步编译成可追溯、可质疑、可继续生长的研究知识网络。
 
+> 本仓库是 [zxw1992/research-wiki](https://github.com/zxw1992/research-wiki) 的 fork。与上游的主要区别是 PDF 不再纳入 git，详见 [PDF 与版本控制](#pdf-与版本控制)。
+
 ## 核心链路
 
 ```text
@@ -23,7 +25,7 @@
 
 | 路径 | 用途 |
 | --- | --- |
-| `raw/papers/` | 原始 PDF、论文正文或补充材料，只读 |
+| `raw/papers/` | 原始 PDF、论文正文或补充材料，只读；PDF 不进 git |
 | `raw/notes/` | 人工阅读笔记、会议笔记、手写转录，只读 |
 | `raw/imports/` | BibTeX、RIS、CSV、Zotero 导出等，只读 |
 | `raw/assets/` | 图片、图表和附件 |
@@ -95,7 +97,7 @@
 firstauthor-year-short-title.pdf
 ```
 
-`raw/` 是原始来源层。Agent 可以读取和引用其中的资料，但默认不会修改、覆盖、移动或删除原始论文。
+`raw/` 是原始来源层。Agent 可以读取和引用其中的资料，但默认不会修改、覆盖、移动或删除原始论文。PDF 默认不进入 git，克隆仓库后需要自己拷贝，具体原因和备份方式见下文「PDF 与版本控制」。
 
 ### 第 4 步：选择快速或深度 Ingest
 
@@ -143,6 +145,23 @@ firstauthor-year-short-title.pdf
 - `围绕 [[某个研究问题]] 做一次综合`：生成候选综合，确认后写入 `wiki/synthesis/`。
 - `整理 inbox`：逐项建议去向，确认后执行。
 - `lint`：只生成健康检查与修复建议，不自动大改。
+
+## PDF 与版本控制
+
+本仓库的 PDF 不进入 git。`.gitignore` 中已加入 `raw/**/*.[pP][dD][fF]`，任意层级、任意大小写的 PDF 都会被忽略，`raw/papers/` 下的论文只保存在本地磁盘。
+
+这么做的原因有三个。
+
+- 单篇 PDF 常见 10 到 50 MB，几百篇会让 `.git` 涨到几十 GB，而且 git 历史不可回收，删掉文件也不减体积。
+- PDF 是二进制文件，每次改动都会存一份完整副本，diff 和合并都失去意义。
+- 笔记需要频繁提交，PDF 不需要。两者混在一起，`git status`、clone 和推送都会变慢。
+
+当前状态和注意事项。
+
+- 仓库早期提交中的 `raw/papers/09_SAM_3D_2511.16624.pdf` 仍留在历史里，`.git` 约 16 MB。彻底清除需要重写历史，会破坏与上游 fork 的公共祖先，暂时保留。
+- 新放进 `raw/papers/` 的 PDF 不会出现在 `git status`，也不会被误提交。
+- PDF 不再由 git 备份。换机器或重新 clone 时它们不会跟过来，需要单独拷贝，或者用 Time Machine、外部硬盘、独立的同步目录保证有第二份。
+- 如果以后确实要清理历史，用 `git filter-repo --path <文件> --invert-paths`，并接受需要 force push、难以再合并上游的代价。
 
 ## 使用边界
 
